@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不規則動詞一覧表</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+    background: #f7f6f2;
+    color: #2c2c2a;
+  }
+  h1 { font-size: 20px; font-weight: 600; text-align: center; margin: 0 0 4px; }
+  .subtitle { text-align: center; color: #5f5e5a; font-size: 13px; margin-bottom: 20px; }
+  .group-label { font-size: 13px; font-weight: 600; color: #5f5e5a; margin: 20px 0 8px; }
+  .list { display: flex; flex-direction: column; gap: 6px; }
+  .item {
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .item-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .num { font-size: 12px; opacity: 0.6; flex-shrink: 0; width: 18px; }
+  .main-text { font-size: 15px; font-weight: 600; margin: 0; }
+  .jp-text { font-size: 12px; margin: 2px 0 0; opacity: 0.75; }
+  .speak-btn {
+    width: 34px; height: 34px; padding: 0;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    background: rgba(255,255,255,0.6); border: none; border-radius: 50%;
+    font-size: 16px; cursor: pointer;
+  }
+  .speak-btn:active { transform: scale(0.92); }
+  .g-teal { background: #E1F5EE; color: #04342C; }
+  .g-purple { background: #EEEDFE; color: #26215C; }
+  .g-coral { background: #FAECE7; color: #4A1B0C; }
+  .g-pink { background: #FBEAF0; color: #4B1528; }
+
+  .topnav { display:flex; gap:8px; margin:0 0 16px; }
+  .topnav a { flex:1; text-align:center; text-decoration:none; padding:10px 8px; border-radius:10px; border:1px solid #d3d1c7; background:#fff; color:#2c2c2a; font-size:14px; }
+  .topnav a.current { background:#2c2c2a; color:white; border-color:#2c2c2a; }
+</style>
+</head>
+<body>
+<nav class="topnav"><a class="current" href="list.html">一覧表</a><a href="quiz.html">クイズ</a></nav>
+<h1>不規則動詞 一覧表</h1>
+<p class="subtitle">全49語・タップで発音を確認</p>
+<div id="app"></div>
+
+<script>
+const groups = [
+  { label: "変化しない型（原形＝過去形）", cls: "g-teal", items: [
+    ["cut","切る","cut"],["put","置く","put"],["read","読む","read"]
+  ]},
+  { label: "母音がAに変わる型", cls: "g-purple", items: [
+    ["begin","始まる","began"],["drink","飲む","drank"],["give","与える","gave"],
+    ["run","走る","ran"],["sing","歌う","sang"],["sit","座る","sat"],
+    ["swim","泳ぐ","swam"],["come","来る","came"],["eat","食べる","ate"]
+  ]},
+  { label: "-ought / -aught型", cls: "g-coral", items: [
+    ["bring","持ってくる","brought"],["buy","買う","bought"],["catch","つかまえる","caught"],
+    ["think","考える","thought"],["teach","教える","taught"]
+  ]},
+  { label: "そのほかの不規則変化", cls: "g-pink", items: [
+    ["is/are","ある","was/were"],["become","になる","became"],["break","壊す","broke"],
+    ["build","建てる","built"],["do","する、行う","did"],["feel","感じる","felt"],
+    ["find","見つける","found"],["forget","忘れる","forgot"],["get","手に入れる","got"],
+    ["go","行く","went"],["grow","成長する","grew"],["have","持っている","had"],
+    ["hear","聞こえる","heard"],["hold","持ちこたえる","held"],["keep","続ける","kept"],
+    ["know","知る","knew"],["leave","去る","left"],["make","作る","made"],
+    ["mean","意味する","meant"],["meet","会う","met"],["say","言う","said"],
+    ["see","見る","saw"],["sell","売る","sold"],["send","送る","sent"],
+    ["sleep","眠る","slept"],["speak","話す","spoke"],["stand","立つ","stood"],
+    ["take","取る","took"],["tell","伝える","told"],["understand","理解する","understood"],
+    ["wear","着る","wore"],["write","書く","wrote"]
+  ]}
+];
+
+function speak(text){
+  if(!window.speechSynthesis) { alert('お使いの環境では音声読み上げに対応していません'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace('/', ' or '));
+  u.lang = 'en-US';
+  u.rate = 0.85;
+  window.speechSynthesis.speak(u);
+}
+
+const app = document.getElementById('app');
+let html = '';
+let n = 0;
+groups.forEach(g => {
+  html += `<p class="group-label">${g.label}</p><div class="list">`;
+  g.items.forEach(([base, jp, past]) => {
+    n++;
+    html += `
+      <div class="item ${g.cls}">
+        <div class="item-left">
+          <span class="num">${n}</span>
+          <div>
+            <p class="main-text">${base} → ${past}</p>
+            <p class="jp-text">${jp}</p>
+          </div>
+        </div>
+        <button class="speak-btn" onclick="speak('${past.split('/')[0]}')" aria-label="発音を聞く">🔊</button>
+      </div>`;
+  });
+  html += `</div>`;
+});
+app.innerHTML = html;
+</script>
+</body>
+</html>
